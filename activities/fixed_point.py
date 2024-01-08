@@ -1,4 +1,4 @@
-#solve fixed point problem
+
 from math import *
 import math
 import sys
