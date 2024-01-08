@@ -3,12 +3,12 @@ from math import *
 import math
 import sys
 
-def find_fixed_point(f, x0, max_iterations=1000, eps=1e-6):
-    # sys.set_int_max_str_digits(int(1e6))
+def find_fixed_point(f, x0, alpha, max_iterations=1000, eps=1e-6):
+    sys.set_int_max_str_digits(int(1e6))
 
     for el in range(max_iterations):
 
-        x1 = f(x0)
+        x1 = x0 + alpha * (f(x0) - x0)
 
         if abs(x1 - x0) < eps:
             return x1
@@ -40,5 +40,5 @@ def example_function_6(x):
     return x**2 - 4
 
 
-fixed_point = find_fixed_point(example_function_5, 0)
+fixed_point = find_fixed_point(example_function_6, 1, 0.1)
 print(f"Fixed point: {fixed_point}")
