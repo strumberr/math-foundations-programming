@@ -34,5 +34,9 @@ def example_function_3(x):
 
     return x**4 - 5*x**3 + 2*x**2 - 3*x + 1
 
-root = find_root_function(example_function_3, -4, 4)
+def example_function_4(x):
+    return math.sin(x) - x**2 + 1
+
+
+root = find_root_function(example_function_4, -10, 10)
 print(f"Groot: {root}")
