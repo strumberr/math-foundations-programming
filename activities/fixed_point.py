@@ -50,6 +50,9 @@ def example_function_6(x):
 def example_function_7(x):
     return np.sqrt(x + 2)*2
 
+def example_function_8(x):
+    return x**2 - 4
+
 
 
 fixed_point, iterations, current_value_array = find_fixed_point(example_function_7, 10, 1)

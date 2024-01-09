@@ -40,7 +40,7 @@ x0 = 2.9
 
 root, iterations, current_value_array = find_root_newtons_method(example_function_7, derivative_example_function_7, x0)
 
-print(f"Root found: {root/2}")
+print(f"Root found: {root}")
 print(f"Iterations: {iterations}")
 print(f"Approximations history: {current_value_array}")
 
