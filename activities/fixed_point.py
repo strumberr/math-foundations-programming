@@ -48,26 +48,37 @@ def example_function_6(x):
     return x**2 - 2
 
 def example_function_7(x):
-    return np.sqrt(x + 2)
+    return np.sqrt(x + 2)*2
 
 
 
-fixed_point, iterations, current_value_array = find_fixed_point(example_function_7, 400, 0.2)
+fixed_point, iterations, current_value_array = find_fixed_point(example_function_7, 10, 1)
 print(f"Fixed point: {fixed_point}")
 print(f"Iterations: {iterations}")
 print(f"Value history: {current_value_array}")
 
-x_values = np.linspace(-3, 5, 400)
+x_values = np.linspace(-3, 10, 400)
 y_values = example_function_7(x_values)
 
-plt.figure(figsize=(8, 6))
-plt.plot(x_values, y_values, label="plot")
-plt.plot(x_values, x_values, label="y = x", linestyle='--')
-plt.scatter([fixed_point], [fixed_point], color='red')
-plt.text(fixed_point, fixed_point, f'  Fixed Point ({fixed_point:.2f}, {fixed_point:.2f})', verticalalignment='bottom')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title(f'Fixed Point Visualization (Found in {iterations} iterations)')
-plt.legend()
-plt.grid(True)
+
+fig, axs = plt.subplots(2, 1, figsize=(6, 8))
+
+
+axs[0].plot(x_values, y_values, label="plot")
+axs[0].plot(x_values, x_values, label="y = x", linestyle='--')
+axs[0].scatter([fixed_point], [fixed_point], color='red')
+axs[0].text(fixed_point, fixed_point, f'  Fixed Point ({fixed_point:.2f}, {fixed_point:.2f})', verticalalignment='bottom')
+axs[0].set_xlabel('x')
+axs[0].set_ylabel('y')
+axs[0].set_title(f'Fixed Point Visualization (Found in {iterations} iterations)')
+axs[0].legend()
+axs[0].grid(True)
+
+axs[1].plot(range(iterations + 1), current_value_array, marker='o')
+axs[1].set_xlabel('Iteration')
+axs[1].set_ylabel('Value')
+axs[1].set_title('Iteration History')
+axs[1].grid(True)
+
+plt.tight_layout()
 plt.show()
