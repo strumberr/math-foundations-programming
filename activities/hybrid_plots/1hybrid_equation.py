@@ -62,42 +62,33 @@ def find_fixed_point(f, x0, alpha, max_iterations=1000, eps=1e-6):
         # print(f"iteration: {el}")
 
 
+
     return x1, max_iterations, current_value_array
 
 def da_coolest_function(example_function, derivative_function, x0, alpha=1, max_iterations=1000, eps=1e-6):
 
 
     try:
-        root, iterations, current_value_array = find_fixed_point(example_function, x0, 
-                                                                 alpha, max_iterations, 
-                                                                 eps)
-        
-        print(f"\nFixed point: {root}")
-        print(f"Iterations: {iterations}")
-        print(f"Approximations history: {current_value_array}\n")
-
-        if (not root) or (root == None) or (root == np.nan) or (root == np.inf) or (root == -np.inf):
-            print("root not found, trying newtons method")
-            root, iterations, current_value_array = find_fixed_point_newtons_method(example_function, 
-                                                                                    derivative_function, 
-                                                                                    x0, alpha, max_iterations, 
-                                                                                    eps)
-            print(f"\nFixed point: {root}")
-            print(f"Iterations: {iterations}")
-            print(f"Approximations history: {current_value_array}\n")
-        else:
-            pass
-        
-    except:
-        try:
-            root, iterations, current_value_array = find_fixed_point_newtons_method(example_function, 
+        root, iterations, current_value_array = find_fixed_point_newtons_method(example_function, 
                                                                                     derivative_function, 
                                                                                     x0, alpha, max_iterations, 
                                                                                     eps)
             
+        print(f"\nFixed point: {root}")
+        print(f"Iterations: {iterations}")
+        print(f"Approximations history: {current_value_array}\n")
+
+        
+    except:
+        try:
+            root, iterations, current_value_array = find_fixed_point(example_function, x0, 
+                                                                 alpha, max_iterations, 
+                                                                 eps)
+        
             print(f"\nFixed point: {root}")
             print(f"Iterations: {iterations}")
             print(f"Approximations history: {current_value_array}\n")
+
         except:
             print(f"couldn't find root")
 
@@ -122,7 +113,7 @@ def derivative_function(x_value):
     return derivative_value
 
 
-x0 = float(-1)
+x0 = float(2)
 eps = 1e-9
 alpha = 1
 max_iterations = 1000
