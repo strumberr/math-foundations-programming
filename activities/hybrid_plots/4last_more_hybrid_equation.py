@@ -49,6 +49,7 @@ def fixed_point_iteration_iter(f, a, b, alpha, eps=1e-9):
         
         if f(x1) == 0:
             return x1
+        
         elif f(a) * f(x1) < 0:
             b = x1
 
@@ -57,14 +58,13 @@ def fixed_point_iteration_iter(f, a, b, alpha, eps=1e-9):
 
         root_array.append(x1)
 
-        
 
     return (a + b) / 2.0, root_array
 
 
 
 
-def da_coolest_function(f, df, x0, alpha=1, max_iterations=1000, eps=1e-6):
+def da_coolest_function(f, df, x0, a, b, alpha=1, max_iterations=1000, eps=1e-6):
 
     newtons_array = []
     fixed_point_array = []
@@ -106,8 +106,7 @@ def da_coolest_function(f, df, x0, alpha=1, max_iterations=1000, eps=1e-6):
     #         break
     #     previous_x_fixed = x_fixed
 
-    a = 0
-    b = 1
+
 
     try:
         x_fixed, bisection_root_array = fixed_point_iteration_iter(f, a, b, alpha, eps)
@@ -252,12 +251,15 @@ def derivative_function(x_value):
     return exp(-x_value)
 
 
-x0 = float(2)
+x0 = float(-1)
 eps = 1e-9
-alpha = 0.01
+alpha = 0.6
 max_iterations = 1000
 
-x_newton, x_fixed, newtons_array, fixed_point_array, total_time_newton, total_time_fixed = da_coolest_function(example_function, derivative_function, x0, alpha, max_iterations, eps)
+a = 0
+b = 1.2
+
+x_newton, x_fixed, newtons_array, fixed_point_array, total_time_newton, total_time_fixed = da_coolest_function(example_function, derivative_function, x0,  a, b, alpha, max_iterations, eps)
 
 #----------------------------------- custom one -----------------------------------
 
