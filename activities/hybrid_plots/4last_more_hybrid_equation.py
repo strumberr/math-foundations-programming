@@ -76,16 +76,21 @@ def da_coolest_function(f, df, x0, alpha=1, max_iterations=1000, eps=1e-6):
 
     start_time_newton = time.time()
 
-    for _ in range(max_iterations):
-        x_newton = newtons_method_iter(f, df, x_newton, alpha, eps)
-        newtons_array.append(x_newton)
-        
-        change = abs(x_newton - previous_x_newton)
-        if change > eps and change < 1e-4:
-            break
+    try:
+        for _ in range(max_iterations):
+            x_newton = newtons_method_iter(f, df, x_newton, alpha, eps)
+            newtons_array.append(x_newton)
+            
+            change = abs(x_newton - previous_x_newton)
+            if change > eps and change < 1e-4:
+                break
 
-        previous_x_newton = x_newton
-    
+            previous_x_newton = x_newton
+    except:
+        print("newtons method failed")
+        x_newton = x0
+        newtons_array = []
+        
     end_time_newton = time.time()
     total_time_newton = end_time_newton - start_time_newton
 
@@ -100,10 +105,16 @@ def da_coolest_function(f, df, x0, alpha=1, max_iterations=1000, eps=1e-6):
     #     if change > eps and change < 1e-4:
     #         break
     #     previous_x_fixed = x_fixed
+
     a = 0
     b = 1
 
-    x_fixed, bisection_root_array = fixed_point_iteration_iter(f, a, b, alpha, eps)
+    try:
+        x_fixed, bisection_root_array = fixed_point_iteration_iter(f, a, b, alpha, eps)
+    except:
+        print("fixed point iteration failed")
+        x_fixed = x0
+        bisection_root_array = []
     
     end_time_fixed = time.time()
     total_time_fixed = end_time_fixed - start_time_fixed
