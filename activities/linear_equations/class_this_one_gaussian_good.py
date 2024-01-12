@@ -200,6 +200,7 @@ n_col_rows = 50
 
 gaussian_elimination = GaussianElimination(gaussian_array)
 
+# you can choose between "hilbert", "complex", "alternating", "random" or "gaussian_array"
 gaussian_array = gaussian_elimination.choose_matrix("hilbert", n_col_rows)
 
 coefficient_array, constant_array = gaussian_elimination.init_split(gaussian_array)
