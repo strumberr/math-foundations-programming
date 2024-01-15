@@ -8,15 +8,13 @@ from sympy import symbols, diff, sympify
 import random
 
 
-gaussian_array = [[1, 1, 1, 3], 
-                  [2, -1, -1, 0], 
-                  [6, -4, 2, 4]]
-
-
 # I commented the code so its more readable, i hope it helps!
 class GaussianElimination():
-    def __init__(self, gaussian_array):
-        self.gaussian_array = gaussian_array
+    def __init__(self):
+
+        self.gaussian_array = [[1, 1, 1, 3], 
+                        [2, -1, -1, 0], 
+                        [6, -4, 2, 4]]
 
 
     def generate_hilbert_matrix(self, n=50):
@@ -59,6 +57,7 @@ class GaussianElimination():
         return rand_gaussian_array
     
     def choose_matrix(self, matrix_type, n=20):
+        print(f"Matrix type: {n}")
         if matrix_type == "hilbert":
             return self.generate_hilbert_matrix(n)
         elif matrix_type == "complex":
@@ -135,7 +134,14 @@ class GaussianElimination():
         distance = np.linalg.norm(difference_vector)
         return distance
     # -------------- here we are calculating the distance between the real solution and the estimated solution -------------- #
-    
+
+    def calculate_residuals_and_absolute_errors(self, real_solution, estimated_solution, coefficient_array_copy, constant_array_copy):
+        a = np.array(coefficient_array_copy)
+        b = np.array(constant_array_copy)
+        residual = np.dot(a, estimated_solution) - b
+        residual_error = np.linalg.norm(residual)
+
+        return residual, residual_error
 
 
     # -------------- #here we are calculating the factor by which the current row will be multiplied and then subtracted from the row below it -------------- #
@@ -224,73 +230,102 @@ class GaussianElimination():
 
 
 
-n_col_rows = 50
-
-gaussian_elimination = GaussianElimination(gaussian_array)
-
-# you can choose between "hilbert", "complex", "alternating", "random" or "gaussian_array"
-gaussian_array = gaussian_elimination.choose_matrix("hilbert", n_col_rows)
-
-coefficient_array, constant_array = gaussian_elimination.init_split(gaussian_array)
-
-print(f"coefficient_array: {coefficient_array}")
-print(f"constant_array: {constant_array}")
-
-coefficient_array_copy, constant_array_copy = gaussian_elimination.copy_arrays(coefficient_array, constant_array)
 
 
-x_value, coefficient_array, constant_array = gaussian_elimination.main_gaussian(coefficient_array, constant_array)
-lhs, rhs = gaussian_elimination.verify_solution(coefficient_array, constant_array, x_value)
-solution_difference_rhs_lhs = abs(lhs - rhs)
+n_iterations = 20
+
+# array_matrixes = ["hilbert"] 
+array_matrixes = ["hilbert", "complex", "alternating", "random"]
 
 
-numpy_solution = np.linalg.solve(coefficient_array_copy, constant_array_copy)
-distance_to_real_solution = gaussian_elimination.calculate_distance(numpy_solution, x_value)
-
-#get the residual for each value in x_value with numpy_solution. Using numpy
-residual = np.array(x_value) - np.array(numpy_solution)
-
-solution = gaussian_elimination.verify_solution_sum(coefficient_array_copy, constant_array_copy, x_value)
+results = {matrix: {"residual_error": [], "absolute_error": [], "dimensionality": []} for matrix in array_matrixes}
 
 
-print(f"\n\033[93mDistance To Real Solution: \033[0m{distance_to_real_solution}")
-print(f"\033[93mLeftHandSide: \033[0m{lhs}")
-print(f"\033[93mRightHandSide: \033[0m{rhs}")
+fig, axs = plt.subplots(1, 3, figsize=(14, 6))
 
-print(f"\033[93mStorm solution: \033[0m {x_value}")
-print(f"\033[93mNumpy solution: \033[0m{numpy_solution}\n")
+for current_matrix in array_matrixes:
 
-if abs(lhs - rhs) > 1e-9:
-    print("\n\033[91mThe solution is incorrect.\033[0m")
-    print(f"Solution difference: \033[91m{solution_difference_rhs_lhs:.24f}\033[0m")
-
-else:
-    print("\n\033[92mThe solution is correct.\033[0m")
-    print(f"Solution difference: \033[91m{solution_difference_rhs_lhs:.24f}\033[0m")
-
-print(f"verify solution: {solution}")
+    residual_error_final_array = []
+    absolute_error_final_array = []
+    dimensionality_array = []
 
 
-# num_variables = len(x_value)
-# fig, axs = plt.subplots(1, 2, figsize=(14, 6))
+    for el_num, n_col_rows in enumerate(range(1, n_iterations)):
 
-# bar_width = 0.35
-# indices = np.arange(num_variables)
+        n_col_rows = n_col_rows
 
-# rects1 = axs[0].bar(indices, x_value, bar_width, alpha=0.2, label='custom gaussian elimination', color='blue')
-# rects2 = axs[0].bar(indices + bar_width, numpy_solution, bar_width, alpha=0.2, label='numpy method', color='red')
+        gaussian_elimination = GaussianElimination()
 
-# axs[0].plot(indices, x_value, marker='o', color='blue', label='Custom Gaussian Elimination')
-# axs[0].plot(indices, numpy_solution, marker='o', color='red', label='NumPy linalg.solve')
+        # you can choose between "hilbert", "complex", "alternating", "random" or "gaussian_array"
+        gaussian_array = gaussian_elimination.choose_matrix(current_matrix, n_col_rows)
 
-# axs[0].set_xlabel('Variables')
-# axs[0].set_ylabel('Solutions')
-# axs[0].set_title('comparison of both solutions')
-# axs[0].set_xticks(indices + bar_width / 2)
-# axs[0].set_xticklabels([f'x{i+1}' for i in range(num_variables)])
-# axs[0].grid(True)
-# axs[0].legend()
+        coefficient_array, constant_array = gaussian_elimination.init_split(gaussian_array)
+
+        
+        coefficient_array_copy, constant_array_copy = gaussian_elimination.copy_arrays(coefficient_array, constant_array)
 
 
+        x_value, coefficient_array, constant_array = gaussian_elimination.main_gaussian(coefficient_array, constant_array)
+        lhs, rhs = gaussian_elimination.verify_solution(coefficient_array, constant_array, x_value)
+        solution_difference_rhs_lhs = abs(lhs - rhs)
 
-# plt.show()
+
+        numpy_solution = np.linalg.solve(coefficient_array_copy, constant_array_copy)
+
+        # distance_to_real_solution = gaussian_elimination.calculate_distance(numpy_solution, x_value)
+        residuals, residual_errors = gaussian_elimination.calculate_residuals_and_absolute_errors(numpy_solution, x_value, coefficient_array_copy, constant_array_copy)
+
+        distance_to_real_solution = gaussian_elimination.calculate_distance(numpy_solution, x_value)
+
+        results[current_matrix]["residual_error"].append(residual_errors)
+        results[current_matrix]["dimensionality"].append(n_col_rows)
+
+        results[current_matrix]["absolute_error"].append(distance_to_real_solution)
+
+        
+
+        print(f"\n\033[93mDistance To Real Solution: \033[0m{distance_to_real_solution}")
+        print(f"\033[93mLeftHandSide: \033[0m{lhs}")
+        print(f"\033[93mRightHandSide: \033[0m{rhs}")
+
+        print(f"\033[93mStorm solution: \033[0m {x_value}")
+        print(f"\033[93mNumpy solution: \033[0m{numpy_solution}\n")
+
+
+        if abs(lhs - rhs) > 1e-9:
+            print("\n\033[91mThe solution is incorrect.\033[0m")
+            print(f"Solution difference: \033[91m{solution_difference_rhs_lhs:.24f}\033[0m")
+
+        else:
+            print("\n\033[92mThe solution is correct.\033[0m")
+            print(f"Solution difference: \033[91m{solution_difference_rhs_lhs:.24f}\033[0m")
+
+
+print(results["hilbert"]["residual_error"])
+print(results["hilbert"]["absolute_error"])
+
+# Plotting the results for each matrix type
+for matrix in array_matrixes:
+    axs[0].plot(results[matrix]["dimensionality"], results[matrix]["residual_error"], label=f"Residual Error {matrix}")
+    axs[1].plot(results[matrix]["dimensionality"], results[matrix]["absolute_error"], label=f"Absolute Error {matrix}")
+
+# Setting labels and title
+axs[0].set_xlabel("Dimensionality")
+axs[0].set_ylabel("Residual Error")
+axs[0].set_title("Residual Error by Matrix Type")
+axs[0].legend()
+
+axs[1].set_xlabel("Dimensionality")
+axs[1].set_ylabel("Absolute Error")
+axs[1].set_title("Absolute Error by Matrix Type")
+axs[1].legend()
+
+axs[2].set_xlabel("Dimensionality")
+axs[2].set_ylabel("Distance To Real Solution")
+axs[2].set_title("Distance To Real Solution by Matrix Type")
+axs[2].legend()
+
+
+
+
+plt.show()

@@ -23,3 +23,64 @@ for iteration in range(0, len(gaussian_array)):
                 coefficient_array[i][j] -= factor * coefficient_array[iteration][j]
 
             constant_array[i] -= factor * constant_array[iteration]
+
+
+
+
+
+
+
+    def residual_error_single_iteration(self, coefficient_array, constant_array, solution_vector, iteration):
+        lhs = 0
+        for j in range(len(coefficient_array[iteration])):
+            lhs += coefficient_array[iteration][j] * solution_vector[j]
+        rhs = constant_array[iteration]
+        residual_error = abs(lhs - rhs)
+        return residual_error
+    
+    def absolute_error_single_iteration(self, real_solution, estimated_solution, iteration):
+        absolute_error = abs(real_solution[iteration] - estimated_solution[iteration])
+        return absolute_error
+    
+
+
+
+
+
+def jacobi_method(self, coefficient_array, constant_array, max_iterations=1000, eps=1e-9):
+        
+        current_value_array = []
+        n = len(coefficient_array)
+        x = [0 for i in range(n)]
+        x_new = x.copy()
+        k = 0
+
+        while k < max_iterations:
+            for i in range(n):
+                sigma = 0
+                for j in range(n):
+                    if j != i:
+                        sigma += coefficient_array[i][j] * x[j]
+                x_new[i] = (constant_array[i] - sigma) / coefficient_array[i][i]
+            k += 1
+            x = x_new.copy()
+            current_value_array.append(x_new.copy())
+
+        return x_new, k, current_value_array
+
+
+
+
+
+
+
+
+diagonal_matrix = []
+
+        for i in range(len(self.matrix)):
+            diagonal_matrix.append([0 for i in range(len(self.matrix))])
+
+        for i in range(len(self.matrix)):
+            diagonal_matrix[i][i] = self.matrix[i][i]
+
+        for el in 
