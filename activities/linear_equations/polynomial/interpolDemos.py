@@ -8,7 +8,6 @@ from sympy import symbols, diff, sympify
 import random
 
 
-#Build and solve the system of linear equations to get coefficients of interpolation polynomial and print it. For test, you could use the example from the lesson - for the points (0,1), (1,0) and (2,1) the coefficients should be 1, -2, 1 (g(x) = 1 - 2x + x^2)
 class Interpolation:
     def __init__(self):
         pass
