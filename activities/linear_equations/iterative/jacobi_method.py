@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sympy import symbols, diff, sympify
 import random
+import sys
+import time
 
+from class_this_one_gaussian_good import GaussianElimination
 
 
 class IterativeSolution:
@@ -28,6 +31,8 @@ class IterativeSolution:
                     temp_matrix.append(random.randint(0, 10))
 
             diagonal_matrix.append(temp_matrix)
+
+        diagonal_matrix_copy = diagonal_matrix.copy()
 
 
         return diagonal_matrix
@@ -85,7 +90,7 @@ class IterativeSolution:
         return residual, residual_error
     
     
-    def jacobi_method(self, a, b, max_iterations=1000, eps=1e-9):
+    def jacobi_method(self, a, b, max_iterations=3000, eps=1e-9):
         
         current_value_array = []
         n = len(a)
@@ -124,36 +129,56 @@ class IterativeSolution:
 
 
 iterative_solution = IterativeSolution()
-diagonal_matrix = iterative_solution.diagonal_matrix(n=5)
+diagonal_matrix = iterative_solution.diagonal_matrix(n=4)
 coefficient_array, constant_array = iterative_solution.split_matrix(diagonal_matrix)
+
+start_time = time.time()
 root, iterations, current_value_array = iterative_solution.jacobi_method(coefficient_array, constant_array)
 residual, residual_error = iterative_solution.calculate_residual(root, coefficient_array, constant_array)
 
-print(f"Residual: {residual}")
-print(f"Residual error: {residual_error}")
-print(f"Diagonal MAtrix: {diagonal_matrix}")
+# print(f"Residual: {residual}")
+# print(f"Residual error: {residual_error}")
+# print(f"Diagonal MAtrix: {diagonal_matrix}")
 
-print(f"\nApproximations history: {current_value_array}")
+# print(f"\nApproximations history: {current_value_array}")
 
 print(f"\nRoot found: {root} in {iterations} iterations")
 
 if iterative_solution.verify_solution(coefficient_array, constant_array, root):
     print("Solution verified")
 
+#stop timer
+end_time = time.time()
+total_time_jacobi = end_time - start_time
 
 
-if iterations < 1000:
-    fig, axs = plt.subplots(2, 1, figsize=(6, 8))
+# initalizing gaussian elimination class
+gaussian_elimination = GaussianElimination()
+print(f"\nMatrix: {diagonal_matrix}")
+coefficient_array, constant_array = gaussian_elimination.init_split(diagonal_matrix)
+print(f"\Coefficiant array1: {coefficient_array}")
+print(f"\nConstant array1: {constant_array}")
 
-    axs[0].plot(range(iterations), current_value_array, label='Approximations History')
-    axs[0].set_xlabel('Iterations')
-    axs[0].set_ylabel('Approximations')
-    axs[0].legend()
+start_time = time.time()
+coefficient_array_copy, constant_array_copy = gaussian_elimination.copy_arrays(coefficient_array, constant_array)
 
-    # #residual errors plot
-    # axs[0].plot(residual, residual, label='Residual Error')
-    # axs[0].set_xlabel('Iterations')
-    # axs[0].set_ylabel('Residual Error')
-    # axs[0].legend()
+x_value, coefficient_array, constant_array = gaussian_elimination.main_gaussian(coefficient_array, constant_array)
+lhs, rhs = gaussian_elimination.verify_solution(coefficient_array, constant_array, x_value)
+solution_difference_rhs_lhs = abs(lhs - rhs)
 
-    plt.show()
+end_time = time.time()
+total_time_gaussian = end_time - start_time
+
+
+fig, axs = plt.subplots(2, 1, figsize=(6, 8))
+
+axs[0].plot(range(iterations), current_value_array, label='Jacobi Method')
+axs[0].set_xlabel('Iterations')
+axs[0].set_ylabel('Approximations')
+axs[0].legend()
+
+axs[1].bar(['Jacobi Method', 'Gaussian Elimination'], [total_time_jacobi, total_time_gaussian])
+axs[1].set_xlabel('Methods')
+axs[1].set_ylabel('Time (seconds)')
+
+plt.show()

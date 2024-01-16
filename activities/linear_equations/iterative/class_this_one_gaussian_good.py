@@ -224,12 +224,12 @@ class GaussianElimination():
 
 
 
-n_col_rows = 50
+n_col_rows = 3
 
 gaussian_elimination = GaussianElimination()
 
 # you can choose between "hilbert", "complex", "alternating", "random" or "gaussian_array"
-gaussian_array = gaussian_elimination.choose_matrix("hilbert", n_col_rows)
+gaussian_array = gaussian_elimination.choose_matrix("random", n_col_rows)
 
 coefficient_array, constant_array = gaussian_elimination.init_split(gaussian_array)
 
