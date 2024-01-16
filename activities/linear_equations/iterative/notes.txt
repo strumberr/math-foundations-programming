@@ -1,0 +1,29 @@
+# for i in range(self.n):
+#             current_y = self.y_array[i]
+
+#             value = current_y * ( self.x_array[0] - self.x_array[1] ) * ( self.x_array[0] - self.x_array[2] ) / ( ( self.x_array[i] - self.x_array[0] ) * ( self.x_array[i] - self.x_array[1] ) * ( self.x_array[i] - self.x_array[2] ) )
+#             print(f"eps: {value}")
+
+
+
+
+
+
+
+
+
+
+def build_interpolating_polynomial(self, x_knots, y_knots):
+        n = len(x_knots)
+        coeffs = []
+
+        for i in range(n):
+            current_y = y_knots[i]
+
+            for j in range(n):
+                if i != j:
+                    current_y *= (x_knots[i] - x_knots[j])
+
+            coeffs.append(current_y)
+
+        return coeffs
