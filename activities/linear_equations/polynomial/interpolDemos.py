@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sympy import symbols, diff, sympify
 import random
+from matplotlib.animation import FuncAnimation
+
 
 
 class Interpolation:
@@ -59,8 +61,13 @@ class Interpolation:
 
 # coeffs = [1, 0, 1]
     
-x_knots = [0, 1, 2, -2, 5]
-y_knots = [1, 2, 5, 1, 4]
+# x_knots = [0, 1, 2, -2, 5]
+# y_knots = [1, 2, 5, 1, 4]
+n_values = 10
+x_knots, y_knots = [random.randint(-50, 50) for _ in range(n_values)], [random.randint(-50, 50) for _ in range(n_values)]
+
+print(x_knots)
+print(y_knots)
 
 input_x = 1
 
