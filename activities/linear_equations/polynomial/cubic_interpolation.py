@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline
 import time
 import random
+from math import *
 
 class CubicInterpolation:
     def __init__(self):
@@ -126,11 +127,24 @@ class CubicInterpolation:
 #                 [8, 30], [9, -15], 
 #                 [10, 35], [11, -25]]
 
+def cubic_function(x):
+    return x**3 - 2*x**2 + x - 1
+
+def sin_function(x):
+    return sin(x)
+
+def other_function(x):
+    return 1/(1+x**2)
+
 
 array_coords = []
 
-for i in range(20):
-    array_coords.append([i, random.randint(-10, 20)])
+# for i in range(20):
+#     array_coords.append([i, random.randint(-10, 20)])
+
+for i in np.linspace(-2, 3, 20):  # 20 points between -2 and 3
+    array_coords.append([i, other_function(i)])
+
 
 
 cube = CubicInterpolation()
@@ -180,7 +194,7 @@ axs[1].set_ylabel('Time taken')
 
 axs[1].legend()
 axs[0].legend()
-axs[0].set_ylim(-30, 40)
+# axs[0].set_ylim(-30, 40)
 
 
 plt.show()
