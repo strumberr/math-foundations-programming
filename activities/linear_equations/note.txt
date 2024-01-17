@@ -84,3 +84,63 @@ diagonal_matrix = []
             diagonal_matrix[i][i] = self.matrix[i][i]
 
         for el in 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ def cubic_interpolate(self, x0=None, x=None, y=None):
+
+        if x0 is None: x0 = self.x0
+        if x is None: x = self.x
+        if y is None: y = self.y
+
+        xdiff = np.diff(x)
+        dydx = np.diff(y) / xdiff
+
+        n = size = len(x)
+
+        w = np.empty(n-1)
+        z = np.empty(n)
+
+        w[0] = 0.
+        z[0] = 0.
+
+        # this here solves a thing called the tridiagonal 
+        # system of equations to find the second derivatives at each point
+        for i in range(1, n-1):
+            m = xdiff[i-1] * (2 - w[i-1]) + 2 * xdiff[i]
+            w[i] = xdiff[i] / m
+            z[i] = (6 * (dydx[i] - dydx[i-1]) - xdiff[i-1] * z[i-1]) / m
+
+        z[-1] = 0.
+
+        for i in range(n-2, -1, -1):
+            z[i] -= w[i] * z[i+1]
+
+        index = np.clip(x.searchsorted(x0), 1, size-1) 
+
+        # this here finds the index of the element in x that is closest to x0
+        xi1, xi0 = x[index], x[index-1]
+        yi1, yi0 = y[index], y[index-1]
+        zi1, zi0 = z[index], z[index-1]
+        hi1 = xi1 - xi0
+
+        # this here is the cubic interpolation formula
+        f0 = (zi0 * (xi1 - x0) ** 3) / (6 * hi1) + \
+            (zi1 * (x0 - xi0) ** 3) / (6 * hi1) + \
+            ((yi1 / hi1) - (zi1 * hi1 / 6)) * (x0 - xi0) + \
+            ((yi0 / hi1) - (zi0 * hi1 / 6)) * (xi1 - x0)
+        
+
+        return f0
+    

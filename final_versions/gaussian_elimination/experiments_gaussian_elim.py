@@ -232,9 +232,11 @@ class GaussianElimination():
 
 
 
-n_iterations = 50
+n_iterations = 20
 
+# array_matrixes = ["hilbert"] 
 array_matrixes = ["hilbert", "complex", "alternating", "random"]
+
 
 results = {matrix: {"residual_error": [], "absolute_error": [], "dimensionality": []} for matrix in array_matrixes}
 
@@ -279,6 +281,7 @@ for current_matrix in array_matrixes:
         results[current_matrix]["dimensionality"].append(n_col_rows)
 
         results[current_matrix]["absolute_error"].append(distance_to_real_solution)
+
         
 
         print(f"\n\033[93mDistance To Real Solution: \033[0m{distance_to_real_solution}")
@@ -297,6 +300,9 @@ for current_matrix in array_matrixes:
             print("\n\033[92mThe solution is correct.\033[0m")
             print(f"Solution difference: \033[91m{solution_difference_rhs_lhs:.24f}\033[0m")
 
+
+print(results["hilbert"]["residual_error"])
+print(results["hilbert"]["absolute_error"])
 
 # Plotting the results for each matrix type
 for matrix in array_matrixes:

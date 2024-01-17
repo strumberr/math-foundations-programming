@@ -27,35 +27,3 @@ def build_interpolating_polynomial(self, x_knots, y_knots):
             coeffs.append(current_y)
 
         return coeffs
-
-
-
-
-
-
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import CubicSpline
-
-
-def cubic_spline_part(coeffs, x):
-    return coeffs[0] + coeffs[1] * x + coeffs[2] * x ** 2 + coeffs[3] * x ** 3
-
-array_coords = [[0, 1], [1, 4], [2, 2]]
-
-x = np.array([coord[0] for coord in array_coords])
-y = np.array([coord[1] for coord in array_coords])
-
-cs = CubicSpline(x, y)
-
-x_interp = np.linspace(x.min(), x.max(), 100)
-y_interp = cs(x_interp)
-
-plt.plot(x, y, 'o', label='Data Points')
-plt.plot(x_interp, y_interp, label='Interpolated Curve')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.show()
