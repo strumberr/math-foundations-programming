@@ -144,3 +144,11 @@ diagonal_matrix = []
 
         return f0
     
+
+
+
+
+
+    loss_function = 0
+        for i in range(len(x)):
+            loss_function += (y[i] - (c0 * x[i] + c1))**2

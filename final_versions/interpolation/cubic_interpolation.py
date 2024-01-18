@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline
 import time
 import random
+from math import *
 
 class CubicInterpolation:
     def __init__(self):
@@ -68,41 +69,6 @@ class CubicInterpolation:
 
         return f0
     
-    def lagrange_interpolation(self, x, x_knots, y_knots):
-        n = len(x_knots)
-        result = 0
-
-        for i in range(n):
-            current_y = y_knots[i]
-            current_x = x_knots[i]
-
-            for j in range(n):
-                if i != j:
-                    current_y *= (x - x_knots[j]) / (current_x - x_knots[j])
-
-            result += current_y
-
-        return result
-    
-    
-    def linear_interpolation(self, x0=None, x=None, y=None):
-
-        if x0 is None: x0 = self.x0
-        if x is None: x = self.x
-        if y is None: y = self.y
-
-        size = len(x)
-
-        index = np.clip(x.searchsorted(x0), 1, size-1) 
-
-        xi1, xi0 = x[index], x[index-1]
-        yi1, yi0 = y[index], y[index-1]
-        hi1 = xi1 - xi0
-
-        f0 = yi0 + (x0 - xi0) * (yi1 - yi0) / hi1
-
-        return f0
-    
     def start_and_stop_timer(self):
         
         if self.start_time is None:
@@ -119,29 +85,39 @@ class CubicInterpolation:
 
     
 
-array_coords = [[0, 10], [1, -5], 
-                [2, 15], [3, -10], 
-                [4, 20], [5, 0], 
-                [6, 25], [7, -20], 
-                [8, 30], [9, -15], 
-                [10, 35], [11, -25]]
+# array_coords = [[0, 10], [1, -5], 
+#                 [2, 15], [3, -10], 
+#                 [4, 20], [5, 0], 
+#                 [6, 25], [7, -20], 
+#                 [8, 30], [9, -15], 
+#                 [10, 35], [11, -25]]
 
-#random array
+def cubic_function(x):
+    return x**3 - 2*x**2 + x - 1
+
+def sin_function(x):
+    return sin(x)
+
+def other_function(x):
+    return 1/(1+x**2)
+
+def very_obscure_function(x):
+    return 1/(1+25*x**2)
+
+def butterfly_curve(x):
+    
+    return np.sin(x) * (np.exp(np.cos(x)) - 2 * np.cos(4 * x) - np.sin(x / 12)**5), np.cos(x) * (np.exp(np.cos(x)) - 2 * np.cos(4 * x) - np.sin(x / 12)**5)
+
+
+
 array_coords = []
 
-for i in range(20):
-    array_coords.append([i, random.randint(-10, 20)])
+# for i in range(20):
+#     array_coords.append([i, random.randint(-10, 20)])
 
+for i in np.linspace(-2, 3, 20):  # 20 points between -2 and 3
 
-# array_coords = [
-#     [0, 0], [1, 1], [2, 3], [3, 5], [4, 8], [5, 11], [6, 15], [7, 19],
-#     [8, 22], [9, 24], [10, 25], [11, 24], [12, 22], [13, 19], [14, 15],
-#     [15, 11], [16, 8], [17, 5], [18, 3], [19, 1], [20, 0], [21, -1],
-#     [22, -3], [23, -5], [24, -8], [25, -11], [26, -15], [27, -19],
-#     [28, -22], [29, -24], [30, -25], [31, -24], [32, -22], [33, -19],
-#     [34, -15], [35, -11], [36, -8], [37, -5], [38, -3], [39, -1],
-#     [40, 0]
-# ]
+    array_coords.append([i, very_obscure_function(i)])
 
 
 cube = CubicInterpolation()
@@ -162,28 +138,8 @@ axs[0].plot(x_new_cubic, y_new, label='cubic_interpolate ', alpha=0.6, color='gr
 total_time1 = cube.start_and_stop_timer()
 
 
-cube.start_and_stop_timer()
-x_new_lagrange = np.linspace(min(x), max(x), 1000)
-y_new = cube.lagrange_interpolation(x_new_lagrange, x, y)
-axs[0].plot(x_new_lagrange, y_new, label='lagrange_interpolation ', alpha=0.6, color='orange')
-total_time2 = cube.start_and_stop_timer()
 
-
-cube.start_and_stop_timer()
-x_new_linear = np.linspace(min(x), max(x), 1000)
-y_new = cube.linear_interpolation(x_new_linear, x, y)
-axs[0].plot(x_new_linear, y_new, label='linear_interpolation ', alpha=0.6, color='blue')
-total_time3 = cube.start_and_stop_timer()
-
-
-cube.start_and_stop_timer()
-x_new_scipy = np.linspace(min(x), max(x), 1000)
-f = CubicSpline(x, y, bc_type='natural')
-axs[0].plot(x_new_scipy, f(x_new_scipy), label='CubicSpline SciPy', alpha=0.6, color='red')
-total_time4 = cube.start_and_stop_timer()
-
-
-axs[1].bar(['cubic_intpl', 'lagrange_intpl', 'linear_intpl', 'cubic_SciPy_intpl'], [total_time1, total_time2, total_time3, total_time4])
+axs[1].bar(['cubic_intpl'], [total_time1])
 axs[1].set_title('Time taken for each method')
 axs[1].set_xlabel('Method')
 axs[1].set_ylabel('Time taken')
@@ -191,7 +147,7 @@ axs[1].set_ylabel('Time taken')
 
 axs[1].legend()
 axs[0].legend()
-axs[0].set_ylim(-30, 40)
+# axs[0].set_ylim(-3, 3)
 
 
 plt.show()

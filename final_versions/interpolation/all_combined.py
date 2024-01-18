@@ -5,8 +5,10 @@ from scipy.interpolate import CubicSpline
 import time
 import random
 from math import *
+from sympy import symbols, diff, sympify, solve
 
-class CubicInterpolation:
+
+class AllCombined:
     def __init__(self):
         self.array_coords = [[0, 1], [1, 4], [2, 2], [3, 0], [4, 1]]
         self.start_time = None
@@ -69,6 +71,7 @@ class CubicInterpolation:
 
         return f0
     
+
     def lagrange_interpolation(self, x, x_knots, y_knots):
         n = len(x_knots)
         result = 0
@@ -86,7 +89,7 @@ class CubicInterpolation:
         return result
     
     
-    def linear_interpolation(self, x0=None, x=None, y=None):
+    def p2p_linear_interpolation(self, x0=None, x=None, y=None):
 
         if x0 is None: x0 = self.x0
         if x is None: x = self.x
@@ -104,6 +107,27 @@ class CubicInterpolation:
 
         return f0
     
+
+    def linear_approximation(self, x=None, y=None):
+        c0, c1 = symbols('c0 c1')
+
+        loss_function = 0
+        for i in range(len(x)):
+            loss_function += (y[i] - (c0 * x[i] + c1))**2
+
+        h = 1e-6
+
+        # derivative_c0 = (loss_function.subs(c0, c0 + h) - loss_function.subs(c0, c0 - h)) / (2 * h)
+        # derivative_c1 = (loss_function.subs(c1, c1 + h) - loss_function.subs(c1, c1 - h)) / (2 * h)
+
+        derivative_c0 = diff(loss_function, c0)
+        derivative_c1 = diff(loss_function, c1)
+
+        solutions = solve([derivative_c0, derivative_c1], [c0, c1])
+
+        return solutions[c0], solutions[c1]
+    
+
     def start_and_stop_timer(self):
         
         if self.start_time is None:
@@ -143,6 +167,8 @@ def butterfly_curve(x):
     
     return np.sin(x) * (np.exp(np.cos(x)) - 2 * np.cos(4 * x) - np.sin(x / 12)**5), np.cos(x) * (np.exp(np.cos(x)) - 2 * np.cos(4 * x) - np.sin(x / 12)**5)
 
+def random_function(x):
+    return random.randint(-10, 20)
 
 
 array_coords = []
@@ -150,59 +176,80 @@ array_coords = []
 # for i in range(20):
 #     array_coords.append([i, random.randint(-10, 20)])
 
-for i in np.linspace(-2, 3, 20):  # 20 points between -2 and 3
+for i in np.linspace(-2, 3, 50):  # 20 points between -2 and 3
 
-    array_coords.append([i, very_obscure_function(i)])
+    array_coords.append([i, other_function(i)])
 
 
-cube = CubicInterpolation()
+cube = AllCombined()
 x, y = cube.numpify_array(array_coords)
 
 
-fig, axs = plt.subplots(1, 2, figsize=(14, 6))
-plt.scatter(x, y)
+fig, axs = plt.subplots(1, 3, figsize=(14, 6))
+# plt.scatter(x, y)
 
 
 axs[0].scatter(x, y, label='Data points', color='black', alpha=1)
 
 
+
+x_new_cubic = np.linspace(min(x), max(x), 1000)
 cube.start_and_stop_timer()
-x_new_cubic = np.linspace(min(x), max(x), 100)
 y_new = cube.cubic_interpolate(x_new_cubic, x, y)
-axs[0].plot(x_new_cubic, y_new, label='cubic_interpolate ', alpha=0.6, color='green')
 total_time1 = cube.start_and_stop_timer()
+axs[0].plot(x_new_cubic, y_new, label='cubic_interpolate ', alpha=0.6, color='green')
 
 
-cube.start_and_stop_timer()
+
 x_new_lagrange = np.linspace(min(x), max(x), 1000)
+cube.start_and_stop_timer()
 y_new = cube.lagrange_interpolation(x_new_lagrange, x, y)
-axs[0].plot(x_new_lagrange, y_new, label='lagrange_interpolation ', alpha=0.6, color='orange')
 total_time2 = cube.start_and_stop_timer()
+axs[0].plot(x_new_lagrange, y_new, label='lagrange_interpolation ', alpha=0.6, color='orange')
 
 
-cube.start_and_stop_timer()
+
 x_new_linear = np.linspace(min(x), max(x), 1000)
-y_new = cube.linear_interpolation(x_new_linear, x, y)
-axs[0].plot(x_new_linear, y_new, label='linear_interpolation ', alpha=0.6, color='blue')
-total_time3 = cube.start_and_stop_timer()
-
-
 cube.start_and_stop_timer()
+y_new = cube.p2p_linear_interpolation(x_new_linear, x, y)
+total_time3 = cube.start_and_stop_timer()
+axs[0].plot(x_new_linear, y_new, label='p2p_linear_interpolation ', alpha=0.6, color='blue')
+
+
+
 x_new_scipy = np.linspace(min(x), max(x), 1000)
+cube.start_and_stop_timer()
 f = CubicSpline(x, y, bc_type='natural')
-axs[0].plot(x_new_scipy, f(x_new_scipy), label='CubicSpline SciPy', alpha=0.6, color='red')
 total_time4 = cube.start_and_stop_timer()
+axs[0].plot(x_new_scipy, f(x_new_scipy), label='CubicSpline SciPy', alpha=0.6, color='red')
 
 
-axs[1].bar(['cubic_intpl', 'lagrange_intpl', 'linear_intpl', 'cubic_SciPy_intpl'], [total_time1, total_time2, total_time3, total_time4])
+
+x_new_cubic = np.linspace(min(x), max(x), 1000)
+cube.start_and_stop_timer()
+c0, c1 = cube.linear_approximation(x, y)
+total_time5 = cube.start_and_stop_timer()
+axs[0].plot(cube.x, [c0 * xi + c1 for xi in cube.x], label='linear_interpolation ', alpha=0.6, color='blue')
+
+
+
+axs[1].bar(['cubic_intpl', 'lagrange_intpl', 'p2p_linear_intpl', 'cubic_SciPy_intpl', 'linear_intpl'], [total_time1, total_time2, total_time3, total_time4, total_time5])
 axs[1].set_title('Time taken for each method')
 axs[1].set_xlabel('Method')
 axs[1].set_ylabel('Time taken')
+axs[1].set_ylim(0, 0.01)
 
 
 axs[1].legend()
 axs[0].legend()
-axs[0].set_ylim(-3, 3)
+# axs[0].set_ylim(-10, 10)
+
+
+
+# Show the plot
+plt.show()
+
+
 
 
 plt.show()
