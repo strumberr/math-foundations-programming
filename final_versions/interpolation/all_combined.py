@@ -176,9 +176,9 @@ array_coords = []
 # for i in range(20):
 #     array_coords.append([i, random.randint(-10, 20)])
 
-for i in np.linspace(-2, 3, 50):  # 20 points between -2 and 3
+for i in np.linspace(-2, 3, 500):  # 20 points between -2 and 3
 
-    array_coords.append([i, other_function(i)])
+    array_coords.append([i, cubic_function(i)])
 
 
 cube = AllCombined()
@@ -242,7 +242,7 @@ axs[1].set_ylim(0, 0.01)
 
 axs[1].legend()
 axs[0].legend()
-# axs[0].set_ylim(-10, 10)
+axs[0].set_ylim(-20, 20)
 
 
 
