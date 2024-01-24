@@ -111,7 +111,6 @@ class IterativeSolution:
                         
                         sigma += a[i_el_coeff_array][j_el_coeff_array] * x[j_el_coeff_array]
 
-                    
                 x_new[i_el_coeff_array] = (b[i_el_coeff_array] - sigma) / coefficient_array[i_el_coeff_array][i_el_coeff_array]
             
             if np.linalg.norm(np.array(x_new) - np.array(x)) < eps:
