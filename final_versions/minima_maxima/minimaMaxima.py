@@ -99,3 +99,4 @@ if __name__ == "__main__":
     mm.minimaXY(1, 2, step_size=0.1, iterations=100)
     mm.minima(1, step_size=0.01, iterations=100)
     plt.show()
+

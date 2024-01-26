@@ -1,6 +1,24 @@
 # math-foundations-programming
 
+## It includes the following algorithms and topics:
+- Pagerank algorithm with network interpolated node plotting
+- Types of approximation
+- Gaussian elimination
+- Interpolation
+    - Cubic Interpolation
+    - Linear Interpolation
+    - Lagrange Interpolation
+- Iteration Methods
+    - gaussian iteration
+    - Jacobi method
+- Minima Maxima
+- Prey and Predator algorithm
+- Root calculation
+    - Bisection
+    - Fixed Point
+    - Newton's Method
 
+# Examples
 ## hybrid_solver:
 
 ### X0 = -1
